@@ -1,0 +1,13 @@
+{
+  "herosgotmotion.config.title": "HerosGotMotion",
+  "herosgotmotion.config.enabled": "Mod Enabled",
+  "herosgotmotion.config.mode": "Display: %s",
+  "herosgotmotion.config.mode.bar": "Bar",
+  "herosgotmotion.config.mode.text": "Text",
+  "herosgotmotion.config.mode.both": "Bar + Text",
+  "herosgotmotion.config.smooth_bar": "Smooth Motion",
+  "herosgotmotion.config.text_opacity": "Text Opacity",
+  "herosgotmotion.config.xp_hide_ticks": "XP Hide Ticks",
+  "herosgotmotion.config.speed_offset_x": "Speed Text Offset X",
+  "herosgotmotion.config.speed_offset_y": "Speed Text Offset Y"
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "herosgotmotion",
+  "version": "${version}",
+  "name": "HerosGotMotion",
+  "description": "Turn your xp bar into a speedometer",
+  "authors": [
+    "HerobaneNair"
+  ],
+  "contact": {},
+  "license": "GPL-3.0-or-later",
+  "icon": "assets/herosgotmotion/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "hero.bane.HerosGotMotion"
+    ],
+    "modmenu": [
+      "hero.bane.modmenu.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    {
+      "config": "herosgotmotion.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}

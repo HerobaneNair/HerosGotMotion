@@ -1,6 +1,8 @@
 package hero.bane.render;
 
 import hero.bane.HerosGotMotion;
+import hero.bane.config.SpeedAnchors;
+import hero.bane.config.SpeedAnchors.Anchor;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -8,8 +10,9 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 
 public final class SprintBarRenderer {
     private static final Identifier SPRINT_BAR_BACKGROUND_TEXTURE = Identifier.fromNamespaceAndPath("herosgotmotion", "hud/sprint_bar_background");
@@ -18,10 +21,97 @@ public final class SprintBarRenderer {
     private static final Identifier SPRINT_BAR_PROGRESS_2_TEXTURE = Identifier.fromNamespaceAndPath("herosgotmotion", "hud/sprint_bar_progress_2");
     private static final Identifier SPRINT_BAR_REGRESS_2_TEXTURE = Identifier.fromNamespaceAndPath("herosgotmotion", "hud/sprint_bar_regress_2");
 
+    private static final Identifier SPRINTING_MODIFIER_ID = Identifier.withDefaultNamespace("sprinting");
+    private static final double MIN_SCALE = 0.05;
+
+    private static final double FILL_AT_CROUCH = Anchor.CROUCH.defaultValue / Anchor.SPRINT.defaultValue;
+    private static final double FILL_AT_WALK = Anchor.WALK.defaultValue / Anchor.SPRINT.defaultValue;
+    private static final double FILL_AT_SPRINT = 1.0;
+    private static final double FILL_AT_MAX = Anchor.MAX.defaultValue / Anchor.SPRINT.defaultValue;
+
     private static float mainBarFill = 0f;
     private static float secondBarFill = 0f;
 
     private SprintBarRenderer() {}
+
+    public static double relativeVelocity(LocalPlayer player) {
+        float yaw = player.getYRot() * ((float) Math.PI / 180F);
+        double dx = player.getX() - player.xOld;
+        double dz = player.getZ() - player.zOld;
+
+        if (HerosGotMotion.objectiveVelocity) {
+            double squared = dx * dx + dz * dz;
+            if (HerosGotMotion.totalVelocity) {
+                double dy = player.getY() - player.yOld;
+                squared += dy * dy;
+            }
+            return Math.sqrt(squared) * 20.0;
+        }
+
+        if (!HerosGotMotion.totalVelocity) {
+            double facingX = -Math.sin(yaw);
+            double facingZ = Math.cos(yaw);
+            return (dx * facingX + dz * facingZ) * 20.0;
+        }
+
+        float pitch = player.getXRot() * ((float) Math.PI / 180F);
+        double cosPitch = Math.cos(pitch);
+        double facingX = -Math.sin(yaw) * cosPitch;
+        double facingY = -Math.sin(pitch);
+        double facingZ = Math.cos(yaw) * cosPitch;
+        double dy = player.getY() - player.yOld;
+        return (dx * facingX + dy * facingY + dz * facingZ) * 20.0;
+    }
+
+    public static float movementSpeedScale(LocalPlayer player) {
+        if (!HerosGotMotion.relativeToSpeed) return 1.0F;
+
+        AttributeInstance instance = player.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (instance == null) return 1.0F;
+
+        double base = instance.getBaseValue();
+        if (base <= 0.0) return 1.0F;
+
+        double value = instance.getValue();
+
+        AttributeModifier sprinting = instance.getModifier(SPRINTING_MODIFIER_ID);
+        if (sprinting != null && sprinting.amount() > -1.0) {
+            value /= 1.0 + sprinting.amount();
+        }
+
+        return (float) Math.max(value / base, MIN_SCALE);
+    }
+
+    public static double barFill(double blocksPerSecond, double scale, SpeedAnchors.Resolved anchors) {
+        boolean forward = blocksPerSecond >= 0.0;
+        double magnitude = Math.abs(blocksPerSecond) / Math.max(scale, MIN_SCALE);
+
+        double crouch = anchor(anchors, forward, Anchor.CROUCH);
+        double walk = anchor(anchors, forward, Anchor.WALK);
+        double sprint = anchor(anchors, forward, Anchor.SPRINT);
+        double max = anchor(anchors, forward, Anchor.MAX);
+
+        double fill;
+        if (magnitude < crouch) {
+            fill = segment(magnitude, 0.0, 0.0, crouch, FILL_AT_CROUCH);
+        } else if (magnitude < walk) {
+            fill = segment(magnitude, crouch, FILL_AT_CROUCH, walk, FILL_AT_WALK);
+        } else if (magnitude < sprint) {
+            fill = segment(magnitude, walk, FILL_AT_WALK, sprint, FILL_AT_SPRINT);
+        } else {
+            fill = segment(magnitude, sprint, FILL_AT_SPRINT, max, FILL_AT_MAX);
+        }
+
+        return forward ? fill : -fill;
+    }
+
+    private static double anchor(SpeedAnchors.Resolved anchors, boolean forward, Anchor anchor) {
+        return forward ? anchors.forward(anchor) : anchors.backward(anchor);
+    }
+
+    private static double segment(double value, double fromSpeed, double fromFill, double toSpeed, double toFill) {
+        return fromFill + (value - fromSpeed) / (toSpeed - fromSpeed) * (toFill - fromFill);
+    }
 
     public static boolean render(GuiGraphics graphics, DeltaTracker deltaTracker) {
         if (!HerosGotMotion.enabled) return false;
@@ -33,36 +123,15 @@ public final class SprintBarRenderer {
             return false;
         }
 
-        float yaw = player.getYRot() * ((float) Math.PI / 180F);
-        double facingX = -Math.sin(yaw);
-        double facingZ = Math.cos(yaw);
+        double blocksPerSecond = relativeVelocity(player);
+        float scale = movementSpeedScale(player);
 
-        double dx = player.getX() - player.xOld;
-        double dz = player.getZ() - player.zOld;
-        double dotProduct = dx * facingX + dz * facingZ;
-        double blocksPerSecond = dotProduct * 20.0;
+        HerosGotMotion.speedScale = scale;
+        HerosGotMotion.speed = blocksPerSecond;
 
-        int speedLevel = 0;
-        if (player.hasEffect(MobEffects.SPEED)) {
-            MobEffectInstance inst = player.getEffect(MobEffects.SPEED);
-            if (inst != null) speedLevel = inst.getAmplifier() + 1;
-        }
+        if (!HerosGotMotion.showBar) return false;
 
-        int slowLevel = 0;
-        if (player.hasEffect(MobEffects.SLOWNESS)) {
-            MobEffectInstance inst = player.getEffect(MobEffects.SLOWNESS);
-            if (inst != null) slowLevel = inst.getAmplifier() + 1;
-        }
-
-        float effectModifiers = (1F + 0.2F * speedLevel) * (1F - 0.15F * slowLevel);
-
-        HerosGotMotion.effMods.set(effectModifiers);
-        HerosGotMotion.speed.set(blocksPerSecond);
-
-        if (!HerosGotMotion.showBar.get()) return false;
-
-        float maxSprintSpeed = 5.61234F * effectModifiers;
-        float scaled = (float) (blocksPerSecond / maxSprintSpeed);
+        float scaled = (float) barFill(blocksPerSecond, scale, HerosGotMotion.anchors.resolved());
         float fraction = Mth.clamp(scaled, -1.0F, 1.0F);
 
         int width = 182;

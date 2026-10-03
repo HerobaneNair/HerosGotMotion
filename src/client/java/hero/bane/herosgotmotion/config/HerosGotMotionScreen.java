@@ -1,7 +1,7 @@
 package hero.bane.herosgotmotion.config;
 
 import hero.bane.herosgotmotion.HerosGotMotion;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -223,28 +223,28 @@ public class HerosGotMotionScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(@NonNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void extractBackground(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         try {
-            super.renderBackground(graphics, mouseX, mouseY, partialTick);
+            super.extractBackground(graphics, mouseX, mouseY, partialTick);
         } catch (IllegalStateException blurAlreadyUsed) {
             graphics.fill(0, 0, this.width, this.height, 0xB0101010);
         }
     }
 
     @Override
-    public void render(@NonNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(graphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        this.extractBackground(graphics, mouseX, mouseY, partialTick);
 
         graphics.enableScissor(0, CONTENT_TOP, this.width, contentBottom);
-        for (Row row : rows) row.widget().render(graphics, mouseX, mouseY, partialTick);
+        for (Row row : rows) row.widget().extractRenderState(graphics, mouseX, mouseY, partialTick);
         graphics.disableScissor();
 
         renderScrollbar(graphics);
-        doneButton.render(graphics, mouseX, mouseY, partialTick);
-        graphics.drawCenteredString(this.font, this.title, this.width / 2, 18, 0xFFFFFFFF);
+        doneButton.extractRenderState(graphics, mouseX, mouseY, partialTick);
+        graphics.centeredText(this.font, this.title, this.width / 2, 18, 0xFFFFFFFF);
     }
 
-    private void renderScrollbar(GuiGraphics graphics) {
+    private void renderScrollbar(GuiGraphicsExtractor graphics) {
         if (maxScroll <= 0) return;
 
         int track = contentBottom - CONTENT_TOP;

@@ -5,7 +5,7 @@ import hero.bane.herosgotmotion.config.SpeedAnchors;
 import hero.bane.herosgotmotion.config.SpeedAnchors.Anchor;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
@@ -113,7 +113,7 @@ public final class SprintBarRenderer {
         return fromFill + (value - fromSpeed) / (toSpeed - fromSpeed) * (toFill - fromFill);
     }
 
-    public static boolean render(GuiGraphics graphics, DeltaTracker deltaTracker) {
+    public static boolean render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
         if (!HerosGotMotion.enabled) return false;
         Minecraft client = Minecraft.getInstance();
         LocalPlayer player = client.player;

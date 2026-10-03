@@ -3,7 +3,7 @@ package hero.bane.herosgotmotion.config;
 import hero.bane.herosgotmotion.HerosGotMotion;
 import hero.bane.herosgotmotion.config.SpeedAnchors.Anchor;
 import hero.bane.herosgotmotion.config.SpeedAnchors.Direction;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -66,8 +66,13 @@ public class SpeedAnchorsScreen extends Screen {
 
         EditBox box = new EditBox(this.font, x, y, BOX_W, ROW_H, label);
         box.setValue(format(HerosGotMotion.anchors.get(direction, anchor)));
-        box.setFilter(text -> typeable(direction, text));
+        String[] lastTypeable = {box.getValue()};
         box.setResponder(text -> {
+            if (!typeable(direction, text)) {
+                box.setValue(lastTypeable[0]);
+                return;
+            }
+            lastTypeable[0] = text;
             if (updating) return;
             try {
                 double value = Double.parseDouble(text.trim());
@@ -126,27 +131,27 @@ public class SpeedAnchorsScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(@NonNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void extractBackground(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         try {
-            super.renderBackground(graphics, mouseX, mouseY, partialTick);
+            super.extractBackground(graphics, mouseX, mouseY, partialTick);
         } catch (IllegalStateException blurAlreadyUsed) {
             graphics.fill(0, 0, this.width, this.height, 0xB0101010);
         }
     }
 
     @Override
-    public void render(@NonNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        super.render(graphics, mouseX, mouseY, partialTick);
-        graphics.drawCenteredString(this.font, this.title, this.width / 2, 18, 0xFFFFFFFF);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTick);
+        graphics.centeredText(this.font, this.title, this.width / 2, 18, 0xFFFFFFFF);
 
-        graphics.drawCenteredString(this.font, Component.literal("Forward"),
+        graphics.centeredText(this.font, Component.literal("Forward"),
                 forwardX + BOX_W / 2, HEADER_Y, 0xFFA0A0A0);
-        graphics.drawCenteredString(this.font, Component.literal("Backward"),
+        graphics.centeredText(this.font, Component.literal("Backward"),
                 backwardX + BOX_W / 2, HEADER_Y, 0xFFA0A0A0);
 
         int y = FIRST_ROW_Y + (ROW_H - 8) / 2;
         for (Anchor anchor : SpeedAnchors.ANCHORS) {
-            graphics.drawString(this.font, Component.literal(anchor.display()),
+            graphics.text(this.font, Component.literal(anchor.display()),
                     labelX, y, 0xFFFFFFFF);
             y += ROW_H + 4;
         }

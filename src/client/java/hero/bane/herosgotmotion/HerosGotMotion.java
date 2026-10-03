@@ -14,7 +14,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
@@ -73,7 +73,7 @@ public class HerosGotMotion implements ClientModInitializer {
                 }
             }
         });
-        HudElementRegistry.addLast(MOTION_TEXT_ELEMENT, (GuiGraphics context, DeltaTracker tickCounter) -> {
+        HudElementRegistry.addLast(MOTION_TEXT_ELEMENT, (GuiGraphicsExtractor context, DeltaTracker tickCounter) -> {
             if (!enabled || !showTexts) return;
             Minecraft client = Minecraft.getInstance();
             if (client.options.hideGui) return;
@@ -84,11 +84,11 @@ public class HerosGotMotion implements ClientModInitializer {
             Font tr = client.font;
             String speedText = String.format("%.2f bl/s", speed);
             int sw = tr.width(speedText);
-            context.drawString(tr, Component.literal(speedText), cx - (sw / 2) + (int) speedOffsetX, cy + (int) speedOffsetY, getSpeedColor(speed, speedScale));
+            context.text(tr, Component.literal(speedText), cx - (sw / 2) + (int) speedOffsetX, cy + (int) speedOffsetY, getSpeedColor(speed, speedScale));
         });
 
         HudElementRegistry.addLast(MOTION_CHART_ELEMENT,
-                (GuiGraphics context, DeltaTracker tickCounter) -> VelocityChart.renderHud(context));
+                (GuiGraphicsExtractor context, DeltaTracker tickCounter) -> VelocityChart.renderHud(context));
     }
 
     public static void setShowChart(boolean show) {

@@ -6,7 +6,7 @@ import hero.bane.herosgotmotion.config.SpeedAnchors;
 import hero.bane.herosgotmotion.config.SpeedAnchors.Anchor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.DebugScreenOverlay;
 import net.minecraft.util.Mth;
 
@@ -48,7 +48,7 @@ public final class VelocityChart {
         HISTORY.clear();
     }
 
-    public static void renderHud(GuiGraphics graphics) {
+    public static void renderHud(GuiGraphicsExtractor graphics) {
         if (!HerosGotMotion.showChart || !HerosGotMotion.enabled) return;
 
         Minecraft client = Minecraft.getInstance();
@@ -84,7 +84,7 @@ public final class VelocityChart {
         };
     }
 
-    public static void drawChart(GuiGraphics graphics, Font font, int x, int bottom, int width) {
+    public static void drawChart(GuiGraphicsExtractor graphics, Font font, int x, int bottom, int width) {
         if (font == null || width < MIN_WIDTH) return;
 
         Layout layout = Layout.anchoredTo(graphics, x, bottom, width);
@@ -103,11 +103,11 @@ public final class VelocityChart {
         drawGuides(graphics, font, layout, anchors, sprintY);
     }
 
-    private static void drawBackground(GuiGraphics graphics, Layout layout) {
+    private static void drawBackground(GuiGraphicsExtractor graphics, Layout layout) {
         graphics.fill(layout.left(), layout.top(), layout.right() + 1, layout.bottom(), BACKGROUND);
     }
 
-    private static void drawBars(GuiGraphics graphics, Layout layout, Window window, SpeedAnchors.Resolved anchors) {
+    private static void drawBars(GuiGraphicsExtractor graphics, Layout layout, Window window, SpeedAnchors.Resolved anchors) {
         int count = window.count();
         int from = window.from();
         int plotLeft = layout.plotLeft();
@@ -152,7 +152,7 @@ public final class VelocityChart {
         return cachedStats;
     }
 
-    private static void drawBar(GuiGraphics graphics, int x, int baseline, double value, double scale,
+    private static void drawBar(GuiGraphicsExtractor graphics, int x, int baseline, double value, double scale,
                                 SpeedAnchors.Resolved anchors) {
         double normalized = value / Math.max(scale, MIN_SCALE);
         int color = 0xFF000000 | SpeedColors.rgb(normalized, anchors);
@@ -165,31 +165,31 @@ public final class VelocityChart {
         }
     }
 
-    private static void drawFrame(GuiGraphics graphics, Layout layout) {
-        graphics.hLine(layout.left(), layout.right(), layout.top(), BORDER);
-        graphics.hLine(layout.left(), layout.right(), layout.bottom() - 1, BORDER);
-        graphics.vLine(layout.left(), layout.top(), layout.bottom(), BORDER);
-        graphics.vLine(layout.right(), layout.top(), layout.bottom(), BORDER);
+    private static void drawFrame(GuiGraphicsExtractor graphics, Layout layout) {
+        graphics.horizontalLine(layout.left(), layout.right(), layout.top(), BORDER);
+        graphics.horizontalLine(layout.left(), layout.right(), layout.bottom() - 1, BORDER);
+        graphics.verticalLine(layout.left(), layout.top(), layout.bottom(), BORDER);
+        graphics.verticalLine(layout.right(), layout.top(), layout.bottom(), BORDER);
     }
 
-    private static void drawStats(GuiGraphics graphics, Font font, Layout layout, Stats stats) {
+    private static void drawStats(GuiGraphicsExtractor graphics, Font font, Layout layout, Stats stats) {
         if (stats.count() <= 0) return;
 
         String avgText = format(stats.average()) + " avg";
         String maxText = format(stats.max()) + " max";
         int y = layout.top() - LABEL_HEIGHT;
 
-        graphics.drawString(font, avgText, layout.left() + 2, y, LABEL_COLOR);
-        graphics.drawString(font, maxText, layout.right() - font.width(maxText) - 1, y, LABEL_COLOR);
+        graphics.text(font, avgText, layout.left() + 2, y, LABEL_COLOR);
+        graphics.text(font, maxText, layout.right() - font.width(maxText) - 1, y, LABEL_COLOR);
     }
 
-    private static void drawSprintLine(GuiGraphics graphics, Layout layout, int sprintY) {
-        graphics.hLine(layout.left(), layout.right(), sprintY, SPRINT_LINE_COLOR);
+    private static void drawSprintLine(GuiGraphicsExtractor graphics, Layout layout, int sprintY) {
+        graphics.horizontalLine(layout.left(), layout.right(), sprintY, SPRINT_LINE_COLOR);
     }
 
-    private static void drawGuides(GuiGraphics graphics, Font font, Layout layout,
+    private static void drawGuides(GuiGraphicsExtractor graphics, Font font, Layout layout,
                                    SpeedAnchors.Resolved anchors, int sprintY) {
-        graphics.hLine(layout.left() + 1, layout.right() - 1, layout.baseline() - 1, ZERO_LINE_COLOR);
+        graphics.horizontalLine(layout.left() + 1, layout.right() - 1, layout.baseline() - 1, ZERO_LINE_COLOR);
 
         drawShadedString(graphics, font,
                 format(anchors.forward(Anchor.SPRINT) * HISTORY.latestScale()) + " bl/s",
@@ -201,9 +201,9 @@ public final class VelocityChart {
         return layout.baseline() - heightFor(anchors.forward(Anchor.SPRINT), anchors);
     }
 
-    private static void drawShadedString(GuiGraphics graphics, Font font, String text, int x, int y) {
+    private static void drawShadedString(GuiGraphicsExtractor graphics, Font font, String text, int x, int y) {
         graphics.fill(x, y, x + font.width(text) + 1, y + LABEL_HEIGHT, BACKGROUND);
-        graphics.drawString(font, text, x + 1, y + 1, LABEL_COLOR, false);
+        graphics.text(font, text, x + 1, y + 1, LABEL_COLOR, false);
     }
 
     private static int heightFor(double blocksPerSecond, SpeedAnchors.Resolved anchors) {
@@ -217,7 +217,7 @@ public final class VelocityChart {
     }
 
     private record Layout(int left, int right, int top, int bottom, int baseline, int plotLeft, int plotWidth) {
-        static Layout anchoredTo(GuiGraphics graphics, int x, int bottom, int width) {
+        static Layout anchoredTo(GuiGraphicsExtractor graphics, int x, int bottom, int width) {
             if (graphics.guiHeight() < CHART_HEIGHT + LABEL_HEIGHT || bottom < CHART_HEIGHT) return null;
 
             return new Layout(

@@ -1,12 +1,12 @@
-package hero.bane;
+package hero.bane.herosgotmotion;
 
-import hero.bane.config.ChartPosition;
-import hero.bane.config.HerosGotMotionConfig;
-import hero.bane.config.HerosGotMotionConfig.Data;
-import hero.bane.config.SpeedAnchors;
-import hero.bane.render.SpeedColors;
-import hero.bane.render.SprintBarRenderer;
-import hero.bane.render.VelocityChart;
+import hero.bane.herosgotmotion.config.ChartPosition;
+import hero.bane.herosgotmotion.config.HerosGotMotionConfig;
+import hero.bane.herosgotmotion.config.HerosGotMotionConfig.Data;
+import hero.bane.herosgotmotion.config.SpeedAnchors;
+import hero.bane.herosgotmotion.render.SpeedColors;
+import hero.bane.herosgotmotion.render.SprintBarRenderer;
+import hero.bane.herosgotmotion.render.VelocityChart;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;

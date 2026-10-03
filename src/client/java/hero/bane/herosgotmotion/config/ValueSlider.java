@@ -1,4 +1,4 @@
-package hero.bane.config;
+package hero.bane.herosgotmotion.config;
 
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.network.chat.Component;

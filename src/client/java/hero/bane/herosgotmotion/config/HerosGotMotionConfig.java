@@ -1,10 +1,10 @@
-package hero.bane.config;
+package hero.bane.herosgotmotion.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import hero.bane.HerosGotMotion;
-import hero.bane.config.SpeedAnchors.Anchor;
-import hero.bane.config.SpeedAnchors.Direction;
+import hero.bane.herosgotmotion.HerosGotMotion;
+import hero.bane.herosgotmotion.config.SpeedAnchors.Anchor;
+import hero.bane.herosgotmotion.config.SpeedAnchors.Direction;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.IOException;

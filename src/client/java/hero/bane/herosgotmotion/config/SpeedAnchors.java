@@ -1,4 +1,4 @@
-package hero.bane.config;
+package hero.bane.herosgotmotion.config;
 
 public final class SpeedAnchors {
     public enum Direction {

@@ -1,4 +1,4 @@
-package hero.bane.config;
+package hero.bane.herosgotmotion.config;
 
 import java.util.Locale;
 

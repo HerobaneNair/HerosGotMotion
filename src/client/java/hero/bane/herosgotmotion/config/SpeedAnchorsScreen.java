@@ -1,8 +1,8 @@
-package hero.bane.config;
+package hero.bane.herosgotmotion.config;
 
-import hero.bane.HerosGotMotion;
-import hero.bane.config.SpeedAnchors.Anchor;
-import hero.bane.config.SpeedAnchors.Direction;
+import hero.bane.herosgotmotion.HerosGotMotion;
+import hero.bane.herosgotmotion.config.SpeedAnchors.Anchor;
+import hero.bane.herosgotmotion.config.SpeedAnchors.Direction;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;

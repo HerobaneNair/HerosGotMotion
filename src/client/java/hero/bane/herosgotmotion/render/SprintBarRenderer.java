@@ -1,8 +1,8 @@
-package hero.bane.render;
+package hero.bane.herosgotmotion.render;
 
-import hero.bane.HerosGotMotion;
-import hero.bane.config.SpeedAnchors;
-import hero.bane.config.SpeedAnchors.Anchor;
+import hero.bane.herosgotmotion.HerosGotMotion;
+import hero.bane.herosgotmotion.config.SpeedAnchors;
+import hero.bane.herosgotmotion.config.SpeedAnchors.Anchor;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

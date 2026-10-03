@@ -1,6 +1,6 @@
-package hero.bane.mixin;
+package hero.bane.herosgotmotion.mixin;
 
-import hero.bane.render.SprintBarRenderer;
+import hero.bane.herosgotmotion.render.SprintBarRenderer;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import org.spongepowered.asm.mixin.Mixin;

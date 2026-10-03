@@ -13,10 +13,10 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "hero.bane.HerosGotMotion"
+      "hero.bane.herosgotmotion.HerosGotMotion"
     ],
     "modmenu": [
-      "hero.bane.modmenu.ModMenuIntegration"
+      "hero.bane.herosgotmotion.modmenu.ModMenuIntegration"
     ]
   },
   "mixins": [

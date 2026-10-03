@@ -1,6 +1,6 @@
-package hero.bane.mixin;
+package hero.bane.herosgotmotion.mixin;
 
-import hero.bane.HerosGotMotion;
+import hero.bane.herosgotmotion.HerosGotMotion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.game.ClientboundSetExperiencePacket;

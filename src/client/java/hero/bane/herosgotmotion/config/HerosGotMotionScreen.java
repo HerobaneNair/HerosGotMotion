@@ -1,6 +1,6 @@
-package hero.bane.config;
+package hero.bane.herosgotmotion.config;
 
-import hero.bane.HerosGotMotion;
+import hero.bane.herosgotmotion.HerosGotMotion;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;

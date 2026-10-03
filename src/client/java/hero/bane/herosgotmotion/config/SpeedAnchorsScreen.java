@@ -160,6 +160,6 @@ public class SpeedAnchorsScreen extends Screen {
     @Override
     public void onClose() {
         HerosGotMotionConfig.saveCurrent();
-        this.minecraft.setScreen(parent);
+        this.minecraft.gui.setScreen(parent);
     }
 }

@@ -52,7 +52,7 @@ public final class VelocityChart {
         if (!HerosGotMotion.showChart || !HerosGotMotion.enabled) return;
 
         Minecraft client = Minecraft.getInstance();
-        if (client.options.hideGui) return;
+        if (client.gui.hud.isHidden()) return;
 
         DebugScreenOverlay debug = client.getDebugOverlay();
         if (debug.showFpsCharts() || debug.showNetworkCharts() || debug.showProfilerChart()) return;

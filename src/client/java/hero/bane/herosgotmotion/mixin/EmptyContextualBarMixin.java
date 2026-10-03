@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(targets = "net.minecraft.client.gui.contextualbar.ContextualBarRenderer$1")
+@Mixin(targets = "net.minecraft.client.gui.contextualbar.ContextualBar$1")
 public class EmptyContextualBarMixin {
     @Inject(method = "extractBackground", at = @At("HEAD"))
     private void hero$drawVelocityBarInEmptySlot(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {

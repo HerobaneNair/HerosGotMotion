@@ -99,7 +99,7 @@ public class HerosGotMotionScreen extends Screen {
         }).bounds(leftX, y, COL_W, ROW_H).build());
 
         anchorsButton = row(Button.builder(Component.literal("Speed Anchors..."),
-                b -> this.minecraft.setScreen(new SpeedAnchorsScreen(this)))
+                b -> this.minecraft.gui.setScreen(new SpeedAnchorsScreen(this)))
                 .bounds(rightX, y, COL_W, ROW_H).build());
         anchorsButton.active = !HerosGotMotion.relativeToSpeed;
 
@@ -260,7 +260,7 @@ public class HerosGotMotionScreen extends Screen {
     public void onClose() {
         HerosGotMotion.textOpacity = Mth.clamp(HerosGotMotion.textOpacity, 26, 255);
         HerosGotMotionConfig.saveCurrent();
-        this.minecraft.setScreen(parent);
+        this.minecraft.gui.setScreen(parent);
     }
 
     private static Component enabledText() {

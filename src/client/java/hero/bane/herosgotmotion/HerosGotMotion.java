@@ -76,7 +76,7 @@ public class HerosGotMotion implements ClientModInitializer {
         HudElementRegistry.addLast(MOTION_TEXT_ELEMENT, (GuiGraphicsExtractor context, DeltaTracker tickCounter) -> {
             if (!enabled || !showTexts) return;
             Minecraft client = Minecraft.getInstance();
-            if (client.options.hideGui) return;
+            if (client.gui.hud.isHidden()) return;
 
             int cx = context.guiWidth() / 2;
             int cy = context.guiHeight() / 2;
